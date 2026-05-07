@@ -2,40 +2,32 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import java.util.Scanner;
 
 public class ConvertUtf8ToWin1251 {
     
     public static void main(String[] args) {
+        System.out.print("Enter the input .txt file: ");
+        Scanner scanner = new Scanner(System.in);
+        String inputFileName = scanner.nextLine().trim();
 
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select the input text file");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        int result = fileChooser.showOpenDialog(null);
-
-        if (result != JFileChooser.APPROVE_OPTION) {
-            JOptionPane.showMessageDialog(null, "Cancel");
+        if (!inputFileName.toLowerCase().endsWith(".txt")) {
+            System.err.println("Invalid format");
             return;
         }
+        
+        String workingDirectory = System.getProperty("user.dir");
+        File inputFile = new File(workingDirectory, inputFileName);
 
-        File inputFile = fileChooser.getSelectedFile();
-
-        String fileName = inputFile.getName();
-        if (!fileName.toLowerCase().endsWith(".txt")) {
-            JOptionPane.showMessageDialog(null,
-                    "Select a file in .txt format",
-                    "Invalid format",
-                    JOptionPane.ERROR_MESSAGE);
+        if (!inputFile.exists()) {
+            System.err.println("File not found in working directory");
             return;
         }
         
         //Формирую имя выходного файла
-        String name = inputFile.getName();
-        int dotIndex = name.lastIndexOf('.');
-        String newName = name.substring(0, dotIndex) + "_Win1251" + name.substring(dotIndex);
-        File outputFile = new File(newName);
+        int dotIndex = inputFileName.lastIndexOf('.');
+        String newName = inputFileName.substring(0, dotIndex) + "_Win1251" + inputFileName.substring(dotIndex);
+        File outputFile = new File(workingDirectory, newName);
 
         //Создаю заранее файл
         try {
